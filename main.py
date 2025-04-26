@@ -1,4 +1,4 @@
-﻿from handlers.admin_features import AdminFeatures
+from handlers.admin_features import AdminFeatures
 from modules.access_manager import AccessManager
 import json
 import logging
@@ -410,6 +410,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         [InlineKeyboardButton("📱 Réseaux", callback_data="show_networks")]
 
     ])
+
+    if str(update.effective_user.id) in ADMIN_IDS and access_manager.is_access_code_enabled():
+        keyboard.extend([
+            [InlineKeyboardButton("🎫 Générer des codes d'accès", callback_data="generate_multiple_codes")],
+            [InlineKeyboardButton("📜 Historique codes", callback_data="show_codes_history")]
+        ])
 
     if str(update.effective_user.id) in ADMIN_IDS:
         keyboard.append([InlineKeyboardButton("🔧 Menu Admin", callback_data="admin")])
@@ -3017,6 +3023,7 @@ async def handle_normal_buttons(update: Update, context: ContextTypes.DEFAULT_TY
                 [InlineKeyboardButton("📋 MENU", callback_data="show_categories")]
             ]
 
+
             with open('config/config.json', 'r') as f:
                 config = json.load(f)
 
@@ -3028,6 +3035,12 @@ async def handle_normal_buttons(update: Update, context: ContextTypes.DEFAULT_TY
 
             keyboard.append([InlineKeyboardButton("📱 Réseaux", callback_data="show_networks")])
 
+            if str(update.effective_user.id) in ADMIN_IDS and access_manager.is_access_code_enabled():
+                keyboard.extend([
+                    [InlineKeyboardButton("🎫 Générer des codes d'accès", callback_data="generate_multiple_codes")],
+                    [InlineKeyboardButton("📜 Historique codes", callback_data="show_codes_history")]
+                ])
+
             if str(update.effective_user.id) in ADMIN_IDS:
                 keyboard.append([InlineKeyboardButton("🔧 Menu Admin", callback_data="admin")])
 
@@ -3037,6 +3050,7 @@ async def handle_normal_buttons(update: Update, context: ContextTypes.DEFAULT_TY
                 parse_mode='HTML'  
             )
             return CHOOSING
+
 
 async def get_file_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handler temporaire pour obtenir le file_id de l'image banner"""
